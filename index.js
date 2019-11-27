@@ -36,6 +36,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 const studinfo = require('./route/stud.route');
+const adminrouteinfo=require('./route/admin.route');
 
 var allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
@@ -47,7 +48,9 @@ var allowCrossDomain = function (req, res, next) {
 
 app.use(allowCrossDomain);
 
-app.use('/student',studinfo)
+app.use('/user',studinfo);
+app.use('/adminroute',adminrouteinfo)
+app.use('/mediafiles', express.static("./mediafiles/"));
 const portNumber=config.port;
 const port = process.env.PORT || portNumber;
 server.listen(port, () => {
