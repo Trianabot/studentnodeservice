@@ -2,11 +2,9 @@ const mongoose=require('mongoose');
 
 const Schema=mongoose.Schema;
 
-const sujectData=new Schema({
-   VideoId:String,
-   Video: String,
-   OwnerId:String,
+const categoryDatab=new Schema({
    type:String,
+   discription:String, 
     CreatedOn: {
         type: Date,
         default: Date.now
@@ -14,9 +12,10 @@ const sujectData=new Schema({
     UpdatedOn: {
         type: Date,
         default: Date.now
-    },    
+    },
+    discription:String,    
 });
 
 
 
-module.exports=mongoose.model('subject',sujectData);
+module.exports=mongoose.model('categoryData',categoryDatab);
