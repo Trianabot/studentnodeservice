@@ -104,6 +104,8 @@ router.get('/getvideos',(req,res)=>{
          let model =new sub_subject({
             discription:req.body.discription,
             type : req.body.type,
+            sub_type:req.body.sub_type,
+            topics:req.body.topics,
          });
          model.save()
          .then(doc=>{
@@ -139,6 +141,36 @@ router.get('/getvideos',(req,res)=>{
         })
     });
     
+//To get subject details
+    router.post('/getsubjectdetails',(req,res)=>{
+        console.log("req.body getsubjectdetails",req.body);
+        sub_subject.find({_id:req.body.id}).then(data=>{
+            console.log("data",data[0]);
+            res.status(200).send({
+                message : 'uploaded videos',
+                data : data
+            });
+        }).catch(err=>{
+            res.status(500).send({
+                message : 'Error while getting videos',
+                err : err
+            });
+        })
+    });
 
 
+    router.post('/getvideosbyselectedtype',(req,res)=>{
+        subjectModel.find({type:req.body.type}).then(data=>{
+            console.log("data",data);
+            res.status(200).send({
+                message : 'uploaded videos',
+                data : data
+            });
+        }).catch(err=>{
+            res.status(500).send({
+                message : 'Error while getting videos',
+                err : err
+            });
+        })
+    });
 module.exports = router;

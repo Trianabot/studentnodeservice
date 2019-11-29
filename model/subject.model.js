@@ -13,7 +13,8 @@ const categoryDatab=new Schema({
         type: Date,
         default: Date.now
     },
-    discription:String,    
+    sub_type:String,
+    topics:[],    
 });
 
 
