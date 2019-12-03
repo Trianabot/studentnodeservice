@@ -27,7 +27,7 @@ router.get('/getstudinfo',validateToken,(req,res)=>{
 })
 
 router.post('/register',(req,res)=>{
-  console.log("req.body",req.body);
+
     studentModel.findOne({ emailId: req.body.emailId }, (err, user) => {
         // Make sure user doesn't already exist
         if (user) return res.status(400).send({ message: 'The email address you have entered is already associated with another account.' });
@@ -36,7 +36,7 @@ router.post('/register',(req,res)=>{
   
         var epassword = simpleCrypto.encrypt(req.body.password);
         // var epassword = req.body.password;
-        //   console.log("epassword",epassword);
+       
   
         try {
           let userregister = new studentModel(
@@ -154,7 +154,7 @@ router.post('/verifystudent',(req,res)=>{
 
 //To update password(26/07/2019:monika)
 router.post('/logout', function (req, res) {
-  // console.log("req.body",req.body);
+  
   studentModel.findOneAndUpdate({ emailId: req.body.emailId }, { $set: { isActive: req.body.isActive } }, { new: true }, (error, userDoc) => {
     if (error) throw error;
     return res.status(200).send({ userDoc: userDoc, message: 'logout successfully' });

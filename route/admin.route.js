@@ -43,7 +43,7 @@ const upload = multer({
 
     // To upload vedio 
 router.post('/savevedio/:fileName',upload.single("memefile"), (req, resp)=>{
-   console.log("req,body",req.body);
+   //console.log("req,body",req.body);
     if(!req.body){
         return res.status(400).send("Bad request");
     }
@@ -143,9 +143,7 @@ router.get('/getvideos',(req,res)=>{
     
 //To get subject details
     router.post('/getsubjectdetails',(req,res)=>{
-        console.log("req.body getsubjectdetails",req.body);
         sub_subject.find({_id:req.body.id}).then(data=>{
-            console.log("data",data[0]);
             res.status(200).send({
                 message : 'uploaded videos',
                 data : data
@@ -160,8 +158,22 @@ router.get('/getvideos',(req,res)=>{
 
 
     router.post('/getvideosbyselectedtype',(req,res)=>{
+        console.log("getvideosbyselectedtype",req.body);
         subjectModel.find({type:req.body.type}).then(data=>{
-            console.log("data",data);
+            res.status(200).send({
+                message : 'uploaded videos',
+                data : data
+            });
+        }).catch(err=>{
+            res.status(500).send({
+                message : 'Error while getting videos',
+                err : err
+            });
+        })
+    });
+
+    router.post('/getvideosUserId',(req,res)=>{
+        subjectModel.find({OwnerId:req.body.OwnerId}).sort({ CreatedOn: -1 }).then(data=>{
             res.status(200).send({
                 message : 'uploaded videos',
                 data : data

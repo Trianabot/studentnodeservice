@@ -1,7 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+var path = require('path');
 const config = require('./config/config');
+const imageUploadRouter = require('./route/imageupload.route');
 
 var app = express();
 const http = require("http");
@@ -38,6 +40,7 @@ app.use(cors(corsOptions));
 const studinfo = require('./route/stud.route');
 const adminrouteinfo=require('./route/admin.route');
 
+
 var allowCrossDomain = function (req, res, next) {
     res.header('Access-Control-Allow-Origin', req.headers.origin);
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,DELETE,OPTIONS');
@@ -50,7 +53,10 @@ app.use(allowCrossDomain);
 
 app.use('/user',studinfo);
 app.use('/adminroute',adminrouteinfo)
+app.use('/uploadProfilePic', imageUploadRouter);
 app.use('/mediafiles', express.static("./mediafiles/"));
+app.use('/profilePicture', express.static("../SAC_Media/mediafiles/"));
+app.use(express.static(path.join(__dirname, 'userProfilePic')));
 const portNumber=config.port;
 const port = process.env.PORT || portNumber;
 server.listen(port, () => {
