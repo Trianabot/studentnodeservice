@@ -173,7 +173,7 @@ router.post('/getvideosbyselectedtype', (req, res) => {
 });
 
 router.post('/getvideosUserId', (req, res) => {
-    subjectModel.find({ OwnerId: req.body.OwnerId }).sort({ CreatedOn: -1 }).then(data => {
+    subjectModel.find({ type: req.body.type }).sort({ CreatedOn: -1 }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
             data: data

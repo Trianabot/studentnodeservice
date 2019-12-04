@@ -36,17 +36,21 @@ router.post('/register',(req,res)=>{
   
         var epassword = simpleCrypto.encrypt(req.body.password);
         // var epassword = req.body.password;
-       
-  
+          
         try {
           let userregister = new studentModel(
             {
               userId: id,
               userName: req.body.userName,
+              lastName:req.body.lastName,
               emailId: req.body.emailId,
               password: epassword,
               gender: req.body.gender,
               city: req.body.city,
+              district:req.body.district,
+              course:req.body.course,
+              degree:req.body.degree,
+              university:req.body.university,
               sysCreatedBy: id,
               sysUpdatedBy: id,
               isActive: false,

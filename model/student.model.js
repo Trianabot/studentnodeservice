@@ -11,6 +11,9 @@ let userRegistrationSchema = new Schema({
         type: String,
         required: true
     },
+    lastName:{
+        type: String,
+    },
     emailId : {
         type: String,
         required: true,
@@ -32,6 +35,18 @@ let userRegistrationSchema = new Schema({
     city: {
         type: String,
         required: true
+    },
+    district: {
+        type: String,
+    },
+    course:{
+        type: String,
+    },
+    degree:{
+        type: String,
+    },
+    university:{
+        type: String,
     },
     ProfileImage:{
         type:String,
