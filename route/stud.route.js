@@ -165,6 +165,19 @@ router.post('/logout', function (req, res) {
   });
 });
 
-
+//To get friend profile
+router.post('/friendprofile', (req, res) => {
+  studentModel.find({userId: req.body.userId}).then(data => {
+      res.status(200).send({
+          message: 'get friend profile',
+          data: data
+      });
+  }).catch(err => {
+      res.status(500).send({
+          message: 'Error while getting friend profile',
+          err: err
+      });
+  })
+});
 
 module.exports = router;
