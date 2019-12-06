@@ -55,11 +55,15 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
     const ext = path.extname(req.file.originalname);
     const memeName = fileName + ext;
     let uniqId = uniqid();
+    let Topic_Id = uniqid();
     let model = new subjectModel({
-        VideoId: uniqId,
-        Video: memeName,
+        MemeId: uniqId,
+        Meme: memeName,
         OwnerId: req.body.loggedInUser,
-        type: req.body.type,
+        Cource: req.body.Cource,
+        Subject: req.body.Subject,
+        Topic: req.body.Topic,
+        Topic_Id: Topic_Id
     });
     model.save()
         .then(doc => {
@@ -234,11 +238,17 @@ router.get('/getcources', (req, res) => {
 
 router.post('/addsubject', (req, res) => {
     let subid = uniqid();
-    courseCollection.updateOne({course: req.body.course}, { "$push": { subjects: { "$each": [{
-        subject: req.body.subject,
-        course: req.body.course,
-        subject_id: subid
-    }], "$position": 0 } } }, function (err, data) {
+    courseCollection.updateOne({ course: req.body.course }, {
+        "$push": {
+            subjects: {
+                "$each": [{
+                    subject: req.body.subject,
+                    course: req.body.course,
+                    subject_id: subid
+                }], "$position": 0
+            }
+        }
+    }, function (err, data) {
         if (!err) {
             res.status(200).send({ data: data, message: "data added subject" })
         }
@@ -251,14 +261,14 @@ router.post('/addsubject', (req, res) => {
 
 });
 
-router.get('/getwholedata',()=>{
+router.get('/getwholedata', () => {
     courseCollection.find().then(cc => { console.log('gftrjytdumy:', cc); });
 })
 
 
 //To get subjectById
 router.post('/getsubjectbyid', (req, res) => {
-    courseCollection.find({course: req.body.course}).then(data => {
+    courseCollection.find({ course: req.body.course }).then(data => {
         res.status(200).send({
             message: 'get cources',
             data: data
