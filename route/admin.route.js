@@ -63,7 +63,8 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
         Cource: req.body.Cource,
         Subject: req.body.Subject,
         Topic: req.body.Topic,
-        Topic_Id: Topic_Id
+        Topic_Id: Topic_Id,
+        OwnerName:req.body.userName
     });
     model.save()
         .then(doc => {
