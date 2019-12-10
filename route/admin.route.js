@@ -59,6 +59,7 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
     let model = new subjectModel({
         MemeId: uniqId,
         Meme: memeName,
+        gender:req.body.gender,
         OwnerId: req.body.loggedInUser,
         Cource: req.body.Cource,
         Subject: req.body.Subject,
@@ -179,7 +180,7 @@ router.post('/getvideosbyselectedtype', (req, res) => {
 
 router.post('/getvideosUserId', (req, res) => {
   //  subjectModel.find({ OwnerId: req.body.userId }).sort({ CreatedOn: -1 }).then(data => {
-    subjectModel.find({ OwnerId: req.body.userId }).sort({ CreatedOn: -1 }).then(data => {
+    subjectModel.find().sort({ CreatedOn: -1 }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
             data: data
@@ -283,6 +284,24 @@ router.post('/getsubjectbyid', (req, res) => {
     })
 });
 
-
+router.post('/postcomment',(req,res)=>{
+    let CommentId = uniqid();
+    let model = new subjectModel({
+        comments:{
+            Comment:req.body.Comment,
+            MemeId: req.body.MemeId,
+            CommentId:CommentId,
+            UserId: req.body.UserId,
+            Username: req.body.Username,
+            gender:req.body.gender
+        }
+    });
+    
+    subjectModel.findOneAndUpdate({MemeId: req.body.MemeId}, {$push: {comments: model.comments}}).then(data=>{
+        console.log("res comments on video",data)
+    }).catch(err=>{
+        console.log("err comments on video",err)
+    });
+})
 
 module.exports = router;
