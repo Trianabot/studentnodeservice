@@ -133,7 +133,7 @@ router.get('/getvideos', (req, res) => {
 //  });
 
 router.post('/getvideosbytype', (req, res) => {
-    sub_subject.find({ type: req.body.type }).then(data => {
+    sub_subject.find({ Cource: req.body.type }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
             data: data
@@ -164,7 +164,7 @@ router.post('/getsubjectdetails', (req, res) => {
 
 router.post('/getvideosbyselectedtype', (req, res) => {
     console.log("getvideosbyselectedtype", req.body);
-    subjectModel.find({ type: req.body.type }).then(data => {
+    subjectModel.find({ Cource: req.body.type }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
             data: data
@@ -178,7 +178,8 @@ router.post('/getvideosbyselectedtype', (req, res) => {
 });
 
 router.post('/getvideosUserId', (req, res) => {
-    subjectModel.find({ type: req.body.type }).sort({ CreatedOn: -1 }).then(data => {
+  //  subjectModel.find({ OwnerId: req.body.userId }).sort({ CreatedOn: -1 }).then(data => {
+    subjectModel.find({ OwnerId: req.body.userId }).sort({ CreatedOn: -1 }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
             data: data
