@@ -43,7 +43,7 @@ const upload = multer({
 
 // To upload vedio 
 router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
-    //console.log("req,body",req.body);
+    
     if (!req.body) {
         return res.status(400).send("Bad request");
     }
@@ -164,7 +164,7 @@ router.post('/getsubjectdetails', (req, res) => {
 
 
 router.post('/getvideosbyselectedtype', (req, res) => {
-    console.log("getvideosbyselectedtype", req.body);
+    
     subjectModel.find({ Cource: req.body.type }).then(data => {
         res.status(200).send({
             message: 'uploaded videos',
@@ -241,12 +241,11 @@ router.get('/getcources', (req, res) => {
 
 router.post('/addsubject', (req, res) => {
     let subid = uniqid();
-    courseCollection.updateOne({ course: req.body.course }, {
+    courseCollection.updateOne({ course_id: req.body.course_id }, {
         "$push": {
             subjects: {
                 "$each": [{
                     subject: req.body.subject,
-                    course: req.body.course,
                     subject_id: subid
                 }], "$position": 0
             }
@@ -271,7 +270,7 @@ router.get('/getwholedata', () => {
 
 //To get subjectById
 router.post('/getsubjectbyid', (req, res) => {
-    courseCollection.find({ course: req.body.course }).then(data => {
+    courseCollection.find({ course_id: req.body.course_id }).then(data => {
         res.status(200).send({
             message: 'get cources',
             data: data
@@ -298,9 +297,9 @@ router.post('/postcomment',(req,res)=>{
     });
     
     subjectModel.findOneAndUpdate({MemeId: req.body.MemeId}, {$push: {comments: model.comments}}).then(data=>{
-        console.log("res comments on video",data)
+       
     }).catch(err=>{
-        console.log("err comments on video",err)
+        
     });
 })
 
