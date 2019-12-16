@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
+
 const subjectsShema = new Schema({
     subject_id: String,
     subject: String,

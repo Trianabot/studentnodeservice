@@ -10,6 +10,7 @@ const courseCollection = require('../model/Cource.model');
 const validateToken = require('../config/auth-token');
 const config = require('../config/config');
 const mkdirp = require('mkdirp');
+const topicModel=require('../model/topic.model');
 
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -43,6 +44,7 @@ const upload = multer({
 
 // To upload vedio 
 router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
+    console.log("saveVideo",req.body);
     
     if (!req.body) {
         return res.status(400).send("Bad request");
@@ -55,18 +57,16 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
     const ext = path.extname(req.file.originalname);
     const memeName = fileName + ext;
     let uniqId = uniqid();
-    let Topic_Id = uniqid();
     let model = new subjectModel({
         MemeId: uniqId,
         Meme: memeName,
         gender:req.body.gender,
         OwnerId: req.body.loggedInUser,
-        Cource: req.body.Cource,
-        Subject: req.body.Subject,
-        Topic: req.body.Topic,
-        Topic_Id: Topic_Id,
+        topic_id: req.body.topic_id,
+        topic: req.body.topic,
         OwnerName:req.body.userName
     });
+    console.log("model add video service",model);
     model.save()
         .then(doc => {
             if (!doc || doc.length === 0) {
@@ -302,5 +302,55 @@ router.post('/postcomment',(req,res)=>{
         
     });
 })
+
+
+//To add topic 
+
+router.post('/addtopic_subject', (req, res) => {
+
+  let   topicID = uniqid();
+    let model = new topicModel({
+            topic_id: topicID,
+            topic: req.body.topic,
+           // subject:req.body.subject,
+            subject_id:req.body.subject_id,
+    });
+    model.save().then(data=>{
+        res.status(200).send({message:"topic added successfully",data:data});
+    }).catch(err=>{
+        res.status(400).send({message:"error while adding topic",err:err});
+    })
+});
+
+
+//To get subjectById
+router.post('/getTopic', (req, res) => {
+    topicModel.find({subject_id:req.body.subject_id}).then(data => {
+        res.status(200).send({
+            message: 'get topics',
+            data: data
+        });
+    }).catch(err => {
+        res.status(500).send({
+            message: 'Error while getting topics',
+            err: err
+        });
+    })
+});
+
+router.post('/getvideosbytopic_id', (req, res) => {
+    //  subjectModel.find({ OwnerId: req.body.userId }).sort({ CreatedOn: -1 }).then(data => {
+      subjectModel.find({topic_id:req.body.topic_id}).sort({ CreatedOn: -1 }).then(data => {
+          res.status(200).send({
+              message: 'uploaded videos',
+              data: data
+          });
+      }).catch(err => {
+          res.status(500).send({
+              message: 'Error while getting videos',
+              err: err
+          });
+      })
+  });
 
 module.exports = router;
