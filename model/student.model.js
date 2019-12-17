@@ -9,7 +9,6 @@ let userRegistrationSchema = new Schema({
     },
     userName: {
         type: String,
-        required: true
     },
     lastName:{
         type: String,
@@ -26,7 +25,7 @@ let userRegistrationSchema = new Schema({
     },
     gender: {
         type: String,
-        required: true
+        
     },
     password: {
         type: String,
@@ -34,7 +33,7 @@ let userRegistrationSchema = new Schema({
     },
     city: {
         type: String,
-        required: true
+       
     },
     district: {
         type: String,

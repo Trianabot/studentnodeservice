@@ -3,6 +3,8 @@ const router = express.Router();
 const studentModel = require('../model/student.model');
 const subjectModel = require('../model/subjectData.model');
 const SimpleCrypto = require("simple-crypto-js").default;
+const TokenGenModel = require('../model/tokengen.model');
+const randomstring = require('randomstring');
 const _secretKey = "some-unique-key";
 const uuid = require('uuid4');
 const jwt = require('jsonwebtoken');
@@ -62,9 +64,49 @@ router.post('/register',(req,res)=>{
   
             });
           userregister.save((err, userdata) => {
+           
             if (!err) {
-             // generateConfirmationEmail(req, res, userdata);
-             res.status(200).send({ message:"mail sent to admin to verify your account " });
+              var token = new TokenGenModel({ userId: userdata.userId, token: randomstring.generate() });
+              // Save the verification token
+              token.save(function (err) {
+                if (err) { return res.status(500).send({ msg: err.message }); }
+                // Send the email
+                var transporter = nodemailer.createTransport(smtpTransport({ service: 'Gmail', auth: { user: "stomachcrew@gmail.com", pass: "ache@123" }, tls: { rejectUnauthorized: false } }));
+                var options = {
+                  viewEngine: {
+                    extname: '.hbs',
+                    layoutsDir: path.join(__dirname, '../views/email/'),
+                    defaultLayout: 'template',
+                    partialsDir: path.join(__dirname,'../views/partials/')
+                  },
+                  viewPath: path.join(__dirname, '../views/email/'),
+                  extName: '.hbs'
+                };
+                transporter.use('compile', hbs(options));
+             //   var confirmationUrl = 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/user\/confirmation\/' + token.token + '.\n'
+                var mailOptions = {
+                  from: 'stomachcrew@gmail.com',
+                  to: req.body.emailId,
+                  subject: 'Welcome In E Learning ',
+                  template: 'emails_body',
+                  context: {
+                    host: req.headers.host,
+                    port: config.port,
+                    emailId:req.body.emailId,
+                   url: 'http://' + config.redirectUrl +  '/login/verify/' +req.body.emailId
+                  }
+                
+                };
+            
+            
+                transporter.sendMail(mailOptions, function (err) {
+                  if (err) {
+                    console.log("errerrerr",err);
+                     return res.status(500).send({ msg: err.message }); 
+                    }
+                  res.status(200).send({ message: 'Registration Successful . A verification email has been sent to ' + userdata.emailId + '.' });
+                });
+              });
             } else {
               res.status(500).send({ message: err });
             }
@@ -76,9 +118,10 @@ router.post('/register',(req,res)=>{
 });
 
 router.post('/login',(req,res)=>{
-    studentModel.findOneAndUpdate({ emailId: req.body.emailId }, {
+  studentModel.findOneAndUpdate({ emailId: req.body.emailId }, {
           $set: { isActive: req.body.isActive }
         }, { new: true }, (error, userDoc) => {
+          console.log("userDocuserDoc",userDoc);
           if (error) throw error;
           if (!userDoc) {
             return res.status(401).send({ success: false, message: 'Authentication failed. Wrong credentials' });
@@ -91,9 +134,10 @@ router.post('/login',(req,res)=>{
           }
           var dpassword = simpleCrypto.decrypt(userDoc.password);
          // let isvalidPasswordWithoutHashed = req.body.password; // Its only for Old user
-      
+           
           if ((dpassword == req.body.password)) {
             if (!userDoc.isVerified) {
+              console.log("Please verify your email to login");
               return res.status(401).send({ message: 'Please verify your email to login' });
             }
             return res.status(200).json({
@@ -109,53 +153,12 @@ router.post('/login',(req,res)=>{
 })
 
 router.post('/verifystudent',(req,res)=>{
-  studentModel.findOneAndUpdate({ emailId: req.body.emailId }, {
-    $set: { isVerified:req.body.isVerified }
-  }, { new: true }, (error, userDoc) => {
+    studentModel.findOneAndUpdate({ emailId: req.body.emailId }, { $set: { isVerified: req.body.isVerified } }, { new: true }, (error, userDoc) => {
+      if (error) throw error;
+      return res.status(200).send({ userDoc: userDoc, message: 'logout successfully' });
+    });
+  });
 
-    if(!error){
-      studentModel.findOne({ emailId: req.body.emailId }, (error, userDoc) => {
-        if (error) throw error;
-      
-        var transporter = nodemailer.createTransport(smtpTransport({ service: 'Gmail', auth: { user: "stomachcrew@gmail.com", pass: "ache@123" }, tls: { rejectUnauthorized: false } }));
-        var options = {
-          viewEngine: {
-            extname: '.hbs',
-            layoutsDir: path.join(__dirname, '../views/email/'),
-            defaultLayout: 'template',
-            partialsDir: path.join(__dirname,'../views/partials/')
-          },
-          viewPath: path.join(__dirname, '../views/email/'),
-          extName: '.hbs'
-        };
-    
-        transporter.use('compile', hbs(options));
-        
-        var mailOptions = {
-          from: 'stomachcrew@gmail.com',
-          to: req.body.emailId,
-          subject: 'Account Verified Successfully',
-          template: 'emails_body',
-          context: {
-            host: req.headers.host,
-            port: config.port,
-            emailId:req.body.emailId,
-           url: 'http://' + config.redirectUrl +  '/#/studentlogin/' + req.body.emailId
-          }
-        
-        };
-      
-        transporter.sendMail(mailOptions, function (err) {
-          if (err) { return res.status(500).send({ msg: err.message }); }
-          res.status(200).send({ message: 'Login url send to student mail id as per registartion .' + req.body.emailId + '.' });
-        });
-      });
-    }
-    if(error){
-      res.status(400).send({message:"error while verifying student account"})
-    }
-})
-});
 
 //To update password(26/07/2019:monika)
 router.post('/logout', function (req, res) {

@@ -11,6 +11,7 @@ const validateToken = require('../config/auth-token');
 const config = require('../config/config');
 const mkdirp = require('mkdirp');
 const topicModel=require('../model/topic.model');
+const studentModel=require('../model/student.model');
 
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
@@ -352,5 +353,20 @@ router.post('/getvideosbytopic_id', (req, res) => {
           });
       })
   });
+
+
+router.get('/getstudentinfo', (req, res) => {
+    studentModel.find().then(data => {
+        res.status(200).send({
+            message: 'get student',
+            data: data
+        });
+    }).catch(err => {
+        res.status(500).send({
+            message: 'Error while getting student data',
+            err: err
+        });
+    })
+});
 
 module.exports = router;
