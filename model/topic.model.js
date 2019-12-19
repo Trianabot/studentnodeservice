@@ -7,6 +7,7 @@ const topicCollection = new Schema({
     subject_id:String,
     topic: String,
     topic_id: String,
+    topicImg:String,
     CreatedOn: {
         type: Date,
         default: Date.now

@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 const subjectsShema = new Schema({
     subject_id: String,
     subject: String,
+    subjectImg: String,
     CreatedOn: {
         type: Date,
         default: Date.now
@@ -21,6 +22,7 @@ const subjectsShema = new Schema({
 const courseCollection = new Schema({
     course: String,
     course_id: String,
+    courseImg: String,
     CreatedOn: {
         type: Date,
         default: Date.now

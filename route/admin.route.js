@@ -89,6 +89,45 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
         });
 });
 
+//router.post('/addcource', (req, resp) => {
+    router.post('/addcource/:fileName', upload.single("memefile"), (req, resp) => {
+    if (!req.body) {
+        return res.status(400).send("Bad request");
+    }
+    const myHost = req.hostname;
+    const portNumber = config.port;
+    const port = process.env.port || portNumber;
+    // const fileName = req.body.OwnerId+"_"+req.body.Title;
+    const fileName = req.params.fileName;
+    const ext = path.extname(req.file.originalname);
+    const memeName = fileName + ext;
+    let cource_Id = uniqid();
+    let model = new courseCollection({
+        course: req.body.course,
+        course_id: cource_Id,
+        courseImg:memeName
+    });
+    console.log("model",model);
+    model.save()
+        .then(doc => {
+            if (!doc || doc.length === 0) {
+                return resp.status(500).send({
+                    message: 'cource added 500',
+                    data: doc
+                });
+            }
+            resp.status(200).send({
+                message: 'cource added successfully..!',
+                data: doc
+            });
+        }).catch(error => {
+            resp.status(500).send({
+                message: 'Error while adding the cource',
+                error: error
+            });
+        });
+});
+
 router.get('/getvideos', (req, res) => {
     subjectModel.find().then(data => {
         res.status(200).send({
@@ -196,34 +235,34 @@ router.post('/getvideosUserId', (req, res) => {
 
 //To add cource
 
-router.post('/addcource', (req, resp) => {
-    if (!req.body) {
-        return res.status(400).send("Bad request");
-    }
-    let cource_Id = uniqid();
-    let model = new courseCollection({
-        course: req.body.course,
-        course_id: cource_Id,
-    });
-    model.save()
-        .then(doc => {
-            if (!doc || doc.length === 0) {
-                return resp.status(500).send({
-                    message: 'cource added 500',
-                    data: doc
-                });
-            }
-            resp.status(200).send({
-                message: 'cource added successfully..!',
-                data: doc
-            });
-        }).catch(error => {
-            resp.status(500).send({
-                message: 'Error while adding the cource',
-                error: error
-            });
-        });
-});
+// router.post('/addcource', (req, resp) => {
+//     if (!req.body) {
+//         return res.status(400).send("Bad request");
+//     }
+//     let cource_Id = uniqid();
+//     let model = new courseCollection({
+//         course: req.body.course,
+//         course_id: cource_Id,
+//     });
+//     model.save()
+//         .then(doc => {
+//             if (!doc || doc.length === 0) {
+//                 return resp.status(500).send({
+//                     message: 'cource added 500',
+//                     data: doc
+//                 });
+//             }
+//             resp.status(200).send({
+//                 message: 'cource added successfully..!',
+//                 data: doc
+//             });
+//         }).catch(error => {
+//             resp.status(500).send({
+//                 message: 'Error while adding the cource',
+//                 error: error
+//             });
+//         });
+// });
 
 //To get cources 
 router.get('/getcources', (req, res) => {
@@ -240,14 +279,24 @@ router.get('/getcources', (req, res) => {
     })
 });
 
-router.post('/addsubject', (req, res) => {
+router.post('/addsubject/:fileName', upload.single("memefile"), (req, res) => {
+    if (!req.body) {
+        return res.status(400).send("Bad request");
+    }
+    const myHost = req.hostname;
+    const portNumber = config.port;
+    const port = process.env.port || portNumber;
+    const fileName = req.params.fileName;
+    const ext = path.extname(req.file.originalname);
+    const memeName = fileName + ext;
     let subid = uniqid();
     courseCollection.updateOne({ course_id: req.body.course_id }, {
         "$push": {
             subjects: {
                 "$each": [{
                     subject: req.body.subject,
-                    subject_id: subid
+                    subject_id: subid,
+                    subjectImg:memeName
                 }], "$position": 0
             }
         }
@@ -259,9 +308,6 @@ router.post('/addsubject', (req, res) => {
             res.status(400).send({ error: err, message: " err added subject" })
         }
     })
-    // subjectObj.save().then(cc => { console.log('ccddddd:', cc); });
-    // courseObj.save().then(cc => { console.log('cc:', cc); });
-
 });
 
 router.get('/getwholedata', () => {
@@ -307,13 +353,22 @@ router.post('/postcomment',(req,res)=>{
 
 //To add topic 
 
-router.post('/addtopic_subject', (req, res) => {
-
-  let   topicID = uniqid();
+router.post('/addtopic_subject/:fileName', upload.single("memefile"), (req, res) => {
+    if (!req.body) {
+        return res.status(400).send("Bad request");
+    }
+    const myHost = req.hostname;
+    const portNumber = config.port;
+    const port = process.env.port || portNumber;
+    const fileName = req.params.fileName;
+    const ext = path.extname(req.file.originalname);
+    const memeName = fileName + ext;
+    let   topicID = uniqid();
     let model = new topicModel({
             topic_id: topicID,
             topic: req.body.topic,
            // subject:req.body.subject,
+            topicImg:memeName,
             subject_id:req.body.subject_id,
     });
     model.save().then(data=>{
