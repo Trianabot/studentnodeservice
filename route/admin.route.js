@@ -44,7 +44,7 @@ const upload = multer({
 
 
 // To upload vedio 
-router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
+router.post('/savevedio/:fileName', upload.array("memefile"),(req, resp) => {
     console.log("saveVideo",req.body);
     
     if (!req.body) {
@@ -55,8 +55,10 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
     const port = process.env.port || portNumber;
     // const fileName = req.body.OwnerId+"_"+req.body.Title;
     const fileName = req.params.fileName;
-    const ext = path.extname(req.file.originalname);
-    const memeName = fileName + ext;
+    console.log('re.files', req.files);
+ //   const ext = path.extname(req.file.originalname);
+    const memeName = req.files[0].filename;
+    const imgName = req.files[1].filename;
     let uniqId = uniqid();
     let model = new subjectModel({
         MemeId: uniqId,
@@ -65,7 +67,9 @@ router.post('/savevedio/:fileName', upload.single("memefile"), (req, resp) => {
         OwnerId: req.body.loggedInUser,
         topic_id: req.body.topic_id,
         topic: req.body.topic,
-        OwnerName:req.body.userName
+        OwnerName:req.body.userName,
+        MemeTitle:req.body.MemeTitle,
+        MemeImg:imgName,
     });
     console.log("model add video service",model);
     model.save()

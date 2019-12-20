@@ -65,6 +65,8 @@ const likeSchema = new Schema({
 const sujectData = new Schema({
     MemeId: String,
     Meme: String,
+    MemeTitle:String,
+    MemeImg:String,
     Cource:String,
     Subject:String,
     topic:String,
